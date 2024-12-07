@@ -2,7 +2,7 @@
 
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { parseStringify } from "../utils";
 import { avatarPlaceholderUrl } from "@/constants";
 import { cookies } from "next/headers";
@@ -154,5 +154,40 @@ const verifySecret = async ({
   }
 };
 
-export { createAccount, verifySecret, sendEmailOTP  };
+/**
+ * Gets the current user by first getting the user's account ID from the session
+ * and then querying the users collection with that account ID
+ * @returns {Promise<Object | null>} The user document if the user exists, null otherwise
+ */
+const getCurrentUser = async () => {
+  try {
+    // Connect to the Appwrite server using the session client
+    const { databases, account } = await createSessionClient();
+
+    // Get the user's account ID from the session
+    const result = await account.get();
+
+    // Query the users collection for a document with the given account ID
+    const user = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal("accountId", result.$id)]
+    );
+
+    // If the user does not exist, return null
+    if (user.total <= 0) return null;
+
+    // Return the user document
+    return parseStringify(user.documents[0]);
+  } catch (error) {
+    // Log the error to the console
+    console.log(error);
+  }
+};
+export {
+  createAccount,
+  verifySecret,
+  sendEmailOTP,
+  getCurrentUser
+};
  
