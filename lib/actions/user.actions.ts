@@ -5,6 +5,7 @@ import { appwriteConfig } from "../appwrite/config";
 import { createAdminClient } from "../appwrite";
 import { parseStringify } from "../utils";
 import { avatarPlaceholderUrl } from "@/constants";
+import { cookies } from "next/headers";
 
 // **Create account flow**
 // 1.User enters full name and email(we will use this to identify if we still need to create a user)
@@ -115,8 +116,46 @@ const createAccount = async ({
   return parseStringify({ accountId });
 };
 
+/**
+ * Verifies the given secret(OTP) and logs the user in by creating a session cookie
+ * @param {Object} data
+ * @param {string} data.accountId - The account ID of the user to log in
+ * @param {string} data.password - The secret(OTP) to verify
+ * @returns {Promise<string>} The session ID of the user who was logged in
+ */
+const verifySecret = async ({
+  accountId,
+  password,
+}: {
+  accountId: string;
+  password: string;
+}) => {
+  try {
+    // Connect to the Appwrite server using the admin client
+    const { account } = await createAdminClient();
+
+    // Create a new session for the given account ID and secret(OTP)
+    const session = await account.createSession(accountId, password);
+
+    // Set the session cookie on the client
+    // This will be used to authenticate the user on future requests
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    // Return the session ID
+    return parseStringify({ sessionId: session.$id });
+  } catch (error) {
+    // If there's an error, log the error and message to the console and re-throw the error
+    handleError(error, "Failed to verify OTP");
+  }
+};
 
 export {
-  createAccount
+  createAccount,
+  verifySecret
 }
  
