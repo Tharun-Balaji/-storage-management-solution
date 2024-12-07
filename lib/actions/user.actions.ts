@@ -154,8 +154,5 @@ const verifySecret = async ({
   }
 };
 
-export {
-  createAccount,
-  verifySecret
-}
+export { createAccount, verifySecret, sendEmailOTP  };
  
