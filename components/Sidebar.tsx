@@ -6,18 +6,38 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/constants";
 
+/**
+ * Sidebar component properties.
+ *
+ * @property {string} fullName - The full name of the user
+ * @property {string} avatar - The URL of the user's avatar
+ * @property {string} email - The email address of the user
+ */
 interface Props {
-  fullName: string;
-  avatar: string;
-  email: string;
+   fullName: string;
+   avatar: string;
+   email: string;
 }
 
+/**
+ * The Sidebar component renders a sidebar with a logo, navigation and a user info
+ * section. The navigation is a list of links to the different sections of the
+ * application. The user info section contains the user's avatar, name and email
+ * address.
+ *
+ * @param {string} fullName - The full name of the user
+ * @param {string} avatar - The URL of the user's avatar
+ * @param {string} email - The email address of the user
+ *
+ * @returns The Sidebar component
+ */
 export default function Sidebar({ fullName, avatar, email }: Props) {
 
   const pathname = usePathname();
 
   return (
     <aside className="sidebar">
+      {/* Logo */}
       <Link href="/">
         <Image
           src="/assets/icons/logo-full-brand.svg"
@@ -36,6 +56,7 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
         />
       </Link>
 
+      {/* Navigation */}
       <nav className="sidebar-nav">
         <ul className="flex flex-1 flex-col gap-6">
           {navItems.map(({ url, name, icon }) => (
@@ -46,6 +67,7 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
                   pathname === url && "shad-active"
                 )}
               >
+                {/* Navigation icon */}
                 <Image
                   src={icon}
                   alt={name}
@@ -56,6 +78,8 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
                     pathname === url && "nav-icon-active"
                   )}
                 />
+
+                {/* Navigation text */}
                 <p className="hidden lg:block">{name}</p>
               </li>
             </Link>
@@ -63,6 +87,7 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
         </ul>
       </nav>
 
+      {/* Background image */}
       <Image
         src="/assets/images/files-2.png"
         alt="logo"
@@ -71,7 +96,9 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
         className="w-full"
       />
 
+      {/* User info */}
       <div className="sidebar-user-info">
+        {/* Avatar */}
         <Image
           src={avatar}
           alt="Avatar"
@@ -79,6 +106,8 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
           height={44}
           className="sidebar-user-avatar"
         />
+
+        {/* User name and email */}
         <div className="hidden lg:block">
           <p className="subtitle-2 capitalize">{fullName}</p>
           <p className="caption">{email}</p>
@@ -86,4 +115,5 @@ export default function Sidebar({ fullName, avatar, email }: Props) {
       </div>
     </aside>
   );
+
 }
