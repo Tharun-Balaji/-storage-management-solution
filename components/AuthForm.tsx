@@ -39,6 +39,14 @@ const authFormSchema = (formType: FormType) => {
 };
 
 
+/**
+ * A form component for user authentication.
+ * Handles sign-in and sign-up form validation and submission.
+ * Depending on the type of form, either creates a new user or signs in an existing one.
+ * If the form is submitted successfully, displays an OTP modal for account verification.
+ * @param {FormType} type - The type of form. Either "sign-in" or "sign-up".
+ * @returns {JSX.Element} The authentication form component.
+ */
 export default function AuthForm({ type }: { type: FormType }) {
 
   const [isLoading, setIsLoading] = useState(false);
@@ -82,11 +90,16 @@ export default function AuthForm({ type }: { type: FormType }) {
 
   return (
     <>
+      {/* Form component to handle the form state and submission */}
       <Form {...form}>
+        {/* HTML form element with a submission handler */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
+          {/* Form title based on the form type */}
           <h1 className="form-title">
             {type === "sign-in" ? "Sign In" : "Sign Up"}
           </h1>
+
+          {/* Conditional rendering for 'sign-up' form fields */}
           {type === "sign-up" && (
             <FormField
               control={form.control}
@@ -105,12 +118,14 @@ export default function AuthForm({ type }: { type: FormType }) {
                     </FormControl>
                   </div>
 
+                  {/* Displays validation message for full name */}
                   <FormMessage className="shad-form-message" />
                 </FormItem>
               )}
             />
           )}
 
+          {/* Email input field with validation message */}
           <FormField
             control={form.control}
             name="email"
@@ -133,6 +148,7 @@ export default function AuthForm({ type }: { type: FormType }) {
             )}
           />
 
+          {/* Submit button with loading state */}
           <Button
             type="submit"
             className="form-submit-button"
@@ -140,6 +156,7 @@ export default function AuthForm({ type }: { type: FormType }) {
           >
             {type === "sign-in" ? "Sign In" : "Sign Up"}
 
+            {/* Loader icon when the form is submitting */}
             {isLoading && (
               <Image
                 src="/assets/icons/loader.svg"
@@ -150,8 +167,11 @@ export default function AuthForm({ type }: { type: FormType }) {
               />
             )}
           </Button>
+
+          {/* Display error message if any */}
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
+          {/* Navigation links for switching between sign-in and sign-up */}
           <div className="body-2 flex justify-center">
             <p className="text-light-100">
               {type === "sign-in"
@@ -162,17 +182,16 @@ export default function AuthForm({ type }: { type: FormType }) {
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
               className="ml-1 font-medium text-brand"
             >
-              {" "}
               {type === "sign-in" ? "Sign Up" : "Sign In"}
             </Link>
           </div>
         </form>
       </Form>
 
-        {accountId && (
+      {/* OTP Modal for account verification */}
+      {accountId && (
         <OTPModal email={form.getValues("email")} accountId={accountId} />
       )}
-
     </>
   );
 }
