@@ -153,4 +153,23 @@ const getFileIcon = (
  */
 const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
-export { getFileType, parseStringify, getFileIcon,convertFileToUrl };
+/**
+ * Construct a URL that can be used to view a file stored in the Appwrite
+ * storage bucket. The URL is constructed from the Appwrite endpoint, the
+ * bucket ID and the file ID.
+ *
+ * @param {string} bucketFileId The ID of the file in the Appwrite storage
+ * bucket.
+ * @returns {string} A URL that can be used to view the file in the browser.
+ */
+const constructFileUrl = (bucketFileId: string) => {
+  return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
+};
+
+export {
+  getFileType,
+  parseStringify,
+  getFileIcon,
+  convertFileToUrl,
+  constructFileUrl
+};
