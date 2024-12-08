@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { createAccount } from "@/lib/actions/user.actions";
+import { createAccount, signInUser } from "@/lib/actions/user.actions";
 import OTPModal from "./OTPModal";
 
 type FormType = "sign-in" | "sign-up";
@@ -72,10 +72,16 @@ export default function AuthForm({ type }: { type: FormType }) {
 
     try {
       // Depending on the type of form, either create a new user or sign in an existing one.
-      const user = await createAccount({
-        fullName: values.fullName || "",
-        email: values.email,
-      });
+      // Depending on the type of form, either create a new user or sign in an existing one.
+      // For sign-up, create a new user with the provided full name and email.
+      // For sign-in, try to find an existing user with the provided email.
+      const user = type === "sign-up"
+        ? await createAccount({
+            fullName: values.fullName || "",
+            email: values.email,
+          })
+        : await signInUser({ email: values.email });
+      
       // Save the user's account ID to the state.
       // This is used to log the user in after the account is created.
       setAccountId(user.accountId);
