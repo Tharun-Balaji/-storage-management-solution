@@ -4,6 +4,7 @@ import MobileNavigation from "@/components/MobileNavigation";
 import Header from "@/components/Header";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 /**
  * This is the main layout component for the dashboard.
@@ -38,6 +39,8 @@ async function Layout({ children }: { children: React.ReactNode }) {
         {/* Main Content */}
         <div className="main-content">{children}</div>
       </section>
+
+      <Toaster />
     </main>
   );
 
