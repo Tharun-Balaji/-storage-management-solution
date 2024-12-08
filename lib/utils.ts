@@ -80,14 +80,14 @@ const getFileType = (fileName: string) => {
  *
  * @param {string | undefined} extension The file extension to determine the
  * icon for.
- * @param {FileType | string} type The type of file to determine the icon for.
+ * @param {File | string} type The type of file to determine the icon for.
  * If the extension is not recognized, the type parameter is used to determine
  * the icon to use.
  * @returns {string} The path to the icon for the given file type.
  */
 const getFileIcon = (
   extension: string | undefined,
-  type: FileType | string
+  type: File | string
 ) => {
   // Define a mapping of file extensions to icon paths
   const extensionToIconMap: { [key: string]: string } = {
