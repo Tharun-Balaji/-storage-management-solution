@@ -144,4 +144,13 @@ const getFileIcon = (
   }
 };
 
-export { getFileType, parseStringify, getFileIcon };
+/**
+ * Takes a File object and returns a URL that can be used to display the file
+ * in the browser. The URL is created using the URL.createObjectURL() method.
+ *
+ * @param {File} file The File object to create a URL for.
+ * @returns {string} A URL that can be used to display the file in the browser.
+ */
+const convertFileToUrl = (file: File) => URL.createObjectURL(file);
+
+export { getFileType, parseStringify, getFileIcon,convertFileToUrl };
