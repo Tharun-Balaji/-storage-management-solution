@@ -34,7 +34,7 @@ async function Layout({ children }: { children: React.ReactNode }) {
         <MobileNavigation {...currentUser} />
 
         {/* Header */}
-        <Header />
+        <Header userId={currentUser.$id} accountId={currentUser.accountId} />
 
         {/* Main Content */}
         <div className="main-content">{children}</div>

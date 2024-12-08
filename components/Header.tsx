@@ -7,13 +7,13 @@ import FileUploader from './FileUploader';
 import { signOutUser } from '@/lib/actions/user.actions';
 
 
-export default function Header() {
+export default function Header({ userId, accountId }: { userId: string; accountId: string }) {
   return (
     <header className="header">
       {/* Search component for searching files */} <Search />
       <div className="header-wrapper">
         {/* File uploader component for uploading files */}
-        <FileUploader />
+        <FileUploader ownerId={userId} accountId={accountId} />
         {/* Form for signing out of the app */}
         <form
           /* This special "use server" comment is for next.js
