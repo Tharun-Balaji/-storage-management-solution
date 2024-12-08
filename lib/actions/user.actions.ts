@@ -210,11 +210,32 @@ const signOutUser = async () => {
   }
 };
 
+ const signInUser = async ({ email }: { email: string }) => {
+  try {
+    // Check if the user already exists using their email
+    const existingUser = await getUserByEmail(email);
+
+    // If user exists, send an OTP to the user's email
+    if (existingUser) {
+      await sendEmailOTP({ email });
+      // Return the user's account ID for further processing
+      return parseStringify({ accountId: existingUser.accountId });
+    }
+
+    // If user does not exist, return an error message
+    return parseStringify({ accountId: null, error: "User not found" });
+  } catch (error) {
+    // Handle any errors that occur during the sign-in process
+    handleError(error, "Failed to sign in user");
+  }
+};
+
 export {
   createAccount,
   verifySecret,
   sendEmailOTP,
   getCurrentUser,
-  signOutUser
+  signOutUser,
+  signInUser
 };
  
