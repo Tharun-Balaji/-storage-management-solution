@@ -30,8 +30,8 @@ async function Layout({ children }: { children: React.ReactNode }) {
 
       <section className="flex h-full flex-1 flex-col">
         {/* Mobile Navigation */}
-        <MobileNavigation/>
-        
+        <MobileNavigation {...currentUser} />
+
         {/* Header */}
         <Header />
 
