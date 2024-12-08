@@ -6,6 +6,7 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 import { parseStringify } from "../utils";
 import { avatarPlaceholderUrl } from "@/constants";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // **Create account flow**
 // 1.User enters full name and email(we will use this to identify if we still need to create a user)
@@ -184,10 +185,36 @@ const getCurrentUser = async () => {
     console.log(error);
   }
 };
+
+/**
+ * Signs out the current user by deleting the user's session from the Appwrite
+ * server and deleting the session cookie from the client.
+ *
+ * @returns {Promise<void>} A promise that resolves when the user is signed out
+ */
+const signOutUser = async () => {
+  const { account } = await createSessionClient();
+
+  try {
+    // Delete the user's session from the Appwrite server
+    await account.deleteSession("current");
+
+    // Delete the session cookie from the client
+    (await cookies()).delete("appwrite-session");
+  } catch (error) {
+    // If there's an error, log the error and message to the console
+    handleError(error, "Failed to sign out user");
+  } finally {
+    // Redirect the user to the sign in page after signing out
+    redirect("/sign-in");
+  }
+};
+
 export {
   createAccount,
   verifySecret,
   sendEmailOTP,
-  getCurrentUser
+  getCurrentUser,
+  signOutUser
 };
  
