@@ -194,11 +194,40 @@ const getFileTypesParams = (type: string) => {
   }
 };
 
+
+/**
+ * Converts a given file size in bytes to a human-readable format.
+ * The size is converted to the largest possible unit (Bytes, KB, MB, GB).
+ * If the size is less than 1 KB, the size is displayed in Bytes.
+ * If the size is less than 1 MB, the size is displayed in KB.
+ * If the size is less than 1 GB, the size is displayed in MB.
+ * If the size is 1 GB or more, the size is displayed in GB.
+ *
+ * @param {number} sizeInBytes The file size in bytes.
+ * @param {number} [digits] The number of decimal places to round the size to.
+ * @returns {string} The human-readable file size.
+ */
+const convertFileSize = (sizeInBytes: number, digits?: number) => {
+  if (sizeInBytes < 1024) {
+    return sizeInBytes + " Bytes"; // Less than 1 KB, show in Bytes
+  } else if (sizeInBytes < 1024 * 1024) {
+    const sizeInKB = sizeInBytes / 1024;
+    return sizeInKB.toFixed(digits || 1) + " KB"; // Less than 1 MB, show in KB
+  } else if (sizeInBytes < 1024 * 1024 * 1024) {
+    const sizeInMB = sizeInBytes / (1024 * 1024);
+    return sizeInMB.toFixed(digits || 1) + " MB"; // Less than 1 GB, show in MB
+  } else {
+    const sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
+    return sizeInGB.toFixed(digits || 1) + " GB"; // 1 GB or more, show in GB
+  }
+};
+
 export {
   getFileType,
   parseStringify,
   getFileIcon,
   convertFileToUrl,
   constructFileUrl,
-  getFileTypesParams
+  getFileTypesParams,
+  convertFileSize
 };
