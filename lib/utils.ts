@@ -265,6 +265,19 @@ const formatDateTime = (isoString: string | null | undefined) => {
   return `${time}, ${day} ${month}`;
 };
 
+
+/**
+ * Construct a URL that can be used to download a file stored in the Appwrite
+ * storage bucket.
+ *
+ * @param {string} bucketFileId The ID of the file in the Appwrite storage
+ * bucket.
+ * @returns {string} A URL that can be used to download the file.
+ */
+const constructDownloadUrl = (bucketFileId: string) => {
+  return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/download?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
+};
+
 export {
   getFileType,
   parseStringify,
@@ -273,5 +286,6 @@ export {
   constructFileUrl,
   getFileTypesParams,
   convertFileSize,
-  formatDateTime
+  formatDateTime,
+  constructDownloadUrl
 };
