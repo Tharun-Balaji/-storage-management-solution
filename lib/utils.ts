@@ -1,3 +1,4 @@
+import { FileType } from "@/types";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -80,14 +81,14 @@ const getFileType = (fileName: string) => {
  *
  * @param {string | undefined} extension The file extension to determine the
  * icon for.
- * @param {File | string} type The type of file to determine the icon for.
+ * @param {FileType | string} type The type of file to determine the icon for.
  * If the extension is not recognized, the type parameter is used to determine
  * the icon to use.
  * @returns {string} The path to the icon for the given file type.
  */
 const getFileIcon = (
   extension: string | undefined,
-  type: File | string
+  type: FileType | string
 ) => {
   // Define a mapping of file extensions to icon paths
   const extensionToIconMap: { [key: string]: string } = {
@@ -166,10 +167,38 @@ const constructFileUrl = (bucketFileId: string) => {
   return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
 };
 
+/**
+ * Returns an array of file types based on the type parameter.
+ * The type parameter can be one of the following:
+ * - documents: Returns an array with only the "document" type.
+ * - images: Returns an array with only the "image" type.
+ * - media: Returns an array with only the "video" and "audio" types.
+ * - others: Returns an array with only the "other" type.
+ * - (default): Returns an array with only the "document" type.
+ *
+ * @param {string} type The type parameter to determine the file types to return.
+ * @returns {string[]} An array of file types.
+ */
+const getFileTypesParams = (type: string) => {
+  switch (type) {
+    case "documents":
+      return ["document"];
+    case "images":
+      return ["image"];
+    case "media":
+      return ["video", "audio"];
+    case "others":
+      return ["other"];
+    default:
+      return ["document"];
+  }
+};
+
 export {
   getFileType,
   parseStringify,
   getFileIcon,
   convertFileToUrl,
-  constructFileUrl
+  constructFileUrl,
+  getFileTypesParams
 };
