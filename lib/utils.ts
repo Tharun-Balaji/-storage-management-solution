@@ -222,6 +222,49 @@ const convertFileSize = (sizeInBytes: number, digits?: number) => {
   }
 };
 
+/**
+ * Formats an ISO date string into a human-readable format.
+ * If the input string is null, undefined, or empty, the function returns "—".
+ * The format is 12-hour time with am/pm, followed by the day, month, and year.
+ * For example, "3:45pm, 15 Jul".
+ * @param {string | null | undefined} isoString The ISO date string to format.
+ * @returns {string} The formatted date string.
+ */
+const formatDateTime = (isoString: string | null | undefined) => {
+  if (!isoString) return "—";
+
+  const date = new Date(isoString);
+
+  // Get hours and adjust for 12-hour format
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const period = hours >= 12 ? "pm" : "am";
+
+  // Convert hours to 12-hour format
+  hours = hours % 12 || 12;
+
+  // Format the time and date parts
+  const time = `${hours}:${minutes.toString().padStart(2, "0")}${period}`;
+  const day = date.getDate();
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = monthNames[date.getMonth()];
+
+  return `${time}, ${day} ${month}`;
+};
+
 export {
   getFileType,
   parseStringify,
@@ -229,5 +272,6 @@ export {
   convertFileToUrl,
   constructFileUrl,
   getFileTypesParams,
-  convertFileSize
+  convertFileSize,
+  formatDateTime
 };
