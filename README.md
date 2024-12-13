@@ -49,3 +49,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ### Entering OTP
 ![OTP Input](image-3.png)
+
+### Uploading file
+![Uploading File](image-4.png)
