@@ -195,4 +195,42 @@ const getFiles = async ({
   }
 };
 
-export { uploadFile,getFiles };
+/**
+ * Renames a file in the files collection with the given file ID
+ * @param {{ fileId: string; name: string; extension: string; path: string; }} props
+ * @param {string} props.fileId - The ID of the file to be renamed
+ * @param {string} props.name - The new name of the file
+ * @param {string} props.extension - The extension of the file (e.g. "txt", "pdf")
+ * @param {string} props.path - The path to the file (e.g. "files/demo.txt")
+ * @returns {Promise<Object | null>} The updated file document if the file was renamed successfully, null otherwise
+ */
+const renameFile = async ({
+  fileId,
+  name,
+  extension,
+  path,
+}: RenameFileProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const newName = `${name}.${extension}`;
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        name: newName,
+      }
+    );
+
+    // Revalidate the path to the file so that the file can be accessed with the new name
+    revalidatePath(path);
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "Failed to rename file");
+  }
+};
+
+
+
+export { uploadFile,getFiles,renameFile };
