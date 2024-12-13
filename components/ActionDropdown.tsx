@@ -89,7 +89,30 @@ function ActionDropdown({ file }: { file: Models.Document }) {
     setIsLoading(false);
   };
 
-  const handleRemoveUser = async (email: string) => {};
+  /**
+   * Handles the removal of a user from the list of users to share the file with
+   *
+   * @param {string} email - The email of the user to be removed
+   *
+   * @returns {Promise<void>}
+   */
+  const handleRemoveUser = async (email: string) => {
+    // Filter out the user to be removed from the list of emails
+    const updatedEmails = emails.filter((e) => e !== email);
+
+    // Update the file with the new list of users
+    const success = await updateFileUsers({
+      fileId: file.$id,
+      emails: updatedEmails,
+      path,
+    });
+
+    // If the update was successful, update the state and close all modals
+    if (success) {
+      setEmails(updatedEmails);
+    }
+          closeAllModals();
+  };
 
   const renderDialogContent = () => {
     if (!action) return null;
