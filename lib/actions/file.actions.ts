@@ -1,6 +1,6 @@
 "use server";
 
-import { GetFilesProps, UploadFileProps } from "@/types";
+import { GetFilesProps, RenameFileProps, UpdateFileUsersProps, UploadFileProps } from "@/types";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { createAdminClient } from "../appwrite";
 import { ID, Models, Query } from "node-appwrite";
@@ -232,5 +232,46 @@ const renameFile = async ({
 };
 
 
+/**
+ * Updates the users of a file in the files collection with the given file ID
+ * @param {{ fileId: string; emails: string[]; path: string; }} props
+ * @param {string} props.fileId - The ID of the file to be updated
+ * @param {string[]} props.emails - The emails of the users to be added to the file
+ * @param {string} props.path - The path to the file (e.g. "files/demo.txt")
+ * @returns {Promise<Object | null>} The updated file document if the file was updated successfully, null otherwise
+ */
+const updateFileUsers = async ({
+  fileId,
+  emails,
+  path,
+}: UpdateFileUsersProps) => {
+  const { databases } = await createAdminClient();
 
-export { uploadFile,getFiles,renameFile };
+  try {
+    // Update the users of the file with the given emails
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        users: emails,
+      }
+    );
+
+    // Revalidate the path to the file so that the new users can access the file
+    revalidatePath(path);
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "Failed to rename file");
+  }
+};
+
+
+
+
+export {
+  uploadFile,
+  getFiles,
+  renameFile,
+  updateFileUsers
+};
