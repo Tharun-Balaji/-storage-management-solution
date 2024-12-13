@@ -24,20 +24,21 @@ import { constructDownloadUrl } from "@/lib/utils";
 import { ActionType } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
-import { renameFile } from "@/lib/actions/file.actions";
+import { renameFile, updateFileUsers } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
-import { FileDetails } from "./ActionsModalContent";
-
+import { FileDetails, ShareInput } from "./ActionsModalContent";
 
 function ActionDropdown({ file }: { file: Models.Document }) {
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name);
   const [isLoading, setIsLoading] = useState(false);
-  
-   const path = usePathname();
+  const [emails, setEmails] = useState<string[]>([]);
+
+  const path = usePathname();
 
   /**
    * Closes all modals and resets their states
@@ -74,7 +75,7 @@ function ActionDropdown({ file }: { file: Models.Document }) {
     const actions = {
       rename: () =>
         renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => console.log("share"),
+      share: () => updateFileUsers({ fileId: file.$id, emails, path }),
       delete: () => console.log("delete"),
     };
 
@@ -87,49 +88,58 @@ function ActionDropdown({ file }: { file: Models.Document }) {
     // Set loading state to false
     setIsLoading(false);
   };
+
+  const handleRemoveUser = async (email: string) => {};
+
   const renderDialogContent = () => {
-if (!action) return null;
+    if (!action) return null;
 
     const { value, label } = action;
 
-     return (
-       <DialogContent className="shad-dialog button">
-         <DialogHeader className="flex flex-col gap-3">
-           <DialogTitle className="text-center text-light-100">
-             {label}
-           </DialogTitle>
-           {value === "rename" && (
-             <Input
-               type="text"
-               value={name}
-               onChange={(e) => setName(e.target.value)}
-             />
-           )}
-           {value === "details" && <FileDetails file={file} />}
-         </DialogHeader>
-         {["rename", "delete", "share"].includes(value) && (
-           <DialogFooter className="flex flex-col gap-3 md:flex-row">
-             <Button onClick={closeAllModals} className="modal-cancel-button">
-               Cancel
-             </Button>
-             <Button onClick={handleAction} className="modal-submit-button">
-               <p className="capitalize">{value}</p>
-               {isLoading && (
-                 <Image
-                   src="/assets/icons/loader.svg"
-                   alt="loader"
-                   width={24}
-                   height={24}
-                   className="animate-spin"
-                 />
-               )}
-             </Button>
-           </DialogFooter>
-         )}
-       </DialogContent>
-     );
-   };
-
+    return (
+      <DialogContent className="shad-dialog button">
+        <DialogHeader className="flex flex-col gap-3">
+          <DialogTitle className="text-center text-light-100">
+            {label}
+          </DialogTitle>
+          {value === "rename" && (
+            <Input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          )}
+          {value === "details" && <FileDetails file={file} />}
+          {value === "share" && (
+            <ShareInput
+              file={file}
+              onInputChange={setEmails}
+              onRemove={handleRemoveUser}
+            />
+          )}
+        </DialogHeader>
+        {["rename", "delete", "share"].includes(value) && (
+          <DialogFooter className="flex flex-col gap-3 md:flex-row">
+            <Button onClick={closeAllModals} className="modal-cancel-button">
+              Cancel
+            </Button>
+            <Button onClick={handleAction} className="modal-submit-button">
+              <p className="capitalize">{value}</p>
+              {isLoading && (
+                <Image
+                  src="/assets/icons/loader.svg"
+                  alt="loader"
+                  width={24}
+                  height={24}
+                  className="animate-spin"
+                />
+              )}
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    );
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -200,7 +210,7 @@ if (!action) return null;
         </DropdownMenuContent>
       </DropdownMenu>
 
-       {renderDialogContent()}
+      {renderDialogContent()}
     </Dialog>
   );
 }
