@@ -22,6 +22,10 @@ import { actionsDropdownItems } from "@/constants";
 import Link from "next/link";
 import { constructDownloadUrl } from "@/lib/utils";
 import { ActionType } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Button } from "./ui/button";
+import { renameFile } from "@/lib/actions/file.actions";
+import { usePathname } from "next/navigation";
 
 
 function ActionDropdown({ file }: { file: Models.Document }) {
@@ -29,6 +33,101 @@ function ActionDropdown({ file }: { file: Models.Document }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
+  const [name, setName] = useState(file.name);
+  const [isLoading, setIsLoading] = useState(false);
+  
+   const path = usePathname();
+
+  /**
+   * Closes all modals and resets their states
+   */
+  const closeAllModals = () => {
+    setIsModalOpen(false);
+    setIsDropdownOpen(false);
+    setAction(null);
+    setName(file.name);
+    //   setEmails([]);
+  };
+
+  /**
+   * Handles the selected action
+   *
+   * @remarks
+   *
+   * This function is called when an action is selected from the dropdown menu.
+   * It will set the loading state to true, execute the selected action, and
+   * then close all modals if the action was successful. Finally, it will set
+   * the loading state to false.
+   *
+   * @returns {Promise<void>}
+   */
+  const handleAction = async () => {
+    // Return early if no action is selected
+    if (!action) return;
+
+    // Set loading state to true
+    setIsLoading(true);
+    let success = false;
+
+    // Define available actions
+    const actions = {
+      rename: () =>
+        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
+      share: () => console.log("share"),
+      delete: () => console.log("delete"),
+    };
+
+    // Execute the selected action
+    success = await actions[action.value as keyof typeof actions]();
+
+    // Close all modals if the action was successful
+    if (success) closeAllModals();
+
+    // Set loading state to false
+    setIsLoading(false);
+  };
+  const renderDialogContent = () => {
+if (!action) return null;
+
+    const { value, label } = action;
+
+     return (
+       <DialogContent className="shad-dialog button">
+         <DialogHeader className="flex flex-col gap-3">
+           <DialogTitle className="text-center text-light-100">
+             {label}
+           </DialogTitle>
+           {value === "rename" && (
+             <Input
+               type="text"
+               value={name}
+               onChange={(e) => setName(e.target.value)}
+             />
+           )}
+         </DialogHeader>
+         {["rename", "delete", "share"].includes(value) && (
+           <DialogFooter className="flex flex-col gap-3 md:flex-row">
+             <Button onClick={closeAllModals} className="modal-cancel-button">
+               Cancel
+             </Button>
+             <Button onClick={handleAction} className="modal-submit-button">
+               <p className="capitalize">{value}</p>
+               {isLoading && (
+                 <Image
+                   src="/assets/icons/loader.svg"
+                   alt="loader"
+                   width={24}
+                   height={24}
+                   className="animate-spin"
+                 />
+               )}
+             </Button>
+           </DialogFooter>
+         )}
+       </DialogContent>
+     );
+   };
+
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -98,6 +197,8 @@ function ActionDropdown({ file }: { file: Models.Document }) {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+       {renderDialogContent()}
     </Dialog>
   );
 }
