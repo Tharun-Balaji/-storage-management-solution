@@ -52,3 +52,55 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ### Uploading file
 ![Uploading File](image-4.png)
+
+
+
+
+app/
+  (auth)
+    /sign-in
+      page.tsx
+    /sign-up
+      page.tsx
+    layout.tsx
+  (root)
+    [type]
+      page.tsx
+    layout.tsx
+    page.ts
+/public
+  /assets
+components/
+  ActionDropdown.tsx
+  ActionsModalContent.tsx
+  Card.tsx
+  FileUploader.tsx
+  Header.tsx
+  MobileNavigation.tsx
+  Search.tsx
+  Sidebar.tsx
+  Thumbnail.tsx
+  ui/ # shadcn components
+    button.tsx
+    dialog.tsx
+    dropdown-menu.tsx
+    input.tsx
+    sheet.tsx
+    toast.tsx
+    ...
+lib/
+  actions/
+    file.actions.ts
+      export {uploadFile,getFiles,renameFile,updateFileUsers,deleteFile};
+    user.actions.ts
+      export {createAccount,verifySecret,sendEmailOTP,getCurrentUser,signOutUser,signInUser};
+  appwrite/
+    config.ts
+    index.ts
+  utils.ts
+hooks/
+  use-toast.ts
+types/
+  index.d.ts
+constants/
+  index.ts
