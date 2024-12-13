@@ -8,6 +8,7 @@ import { Models } from "node-appwrite";
 import { getFiles } from "@/lib/actions/file.actions";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
+import { useDebounce } from "use-debounce";
 
 
 
@@ -22,21 +23,23 @@ function Search() {
   const router = useRouter();
   const path = usePathname();
 
+  const [debouncedQuery] = useDebounce(query, 300);
+
   useEffect(() => { 
     const fetchFiles = async () => { 
 
-       if (!query) {
-         setResults([]);
-         setOpen(false);
-         return router.push(path.replace(searchParams.toString(), ""));
-       }
+        if (debouncedQuery.length === 0) {
+          setResults([]);
+          setOpen(false);
+          return router.push(path.replace(searchParams.toString(), ""));
+        }
 
-       const files = await getFiles({ searchText:query, types:[] });
+       const files = await getFiles({ searchText:debouncedQuery, types:[] });
        setResults(files.documents);
        setOpen(true);
     };
      fetchFiles();
-  },[query]);
+  },[debouncedQuery, path, searchParams, router]);
 
    useEffect(() => {
      if (!searchQuery) {
