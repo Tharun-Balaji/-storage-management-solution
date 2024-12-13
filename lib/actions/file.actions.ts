@@ -1,6 +1,6 @@
 "use server";
 
-import { GetFilesProps, RenameFileProps, UpdateFileUsersProps, UploadFileProps } from "@/types";
+import { DeleteFileProps, GetFilesProps, RenameFileProps, UpdateFileUsersProps, UploadFileProps } from "@/types";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { createAdminClient } from "../appwrite";
 import { ID, Models, Query } from "node-appwrite";
@@ -267,11 +267,40 @@ const updateFileUsers = async ({
 };
 
 
+/**
+ * Deletes a file from the files collection with the given file ID and bucket file ID
+ * @param {{ fileId: string; bucketFileId: string; path: string; }} props
+ * @param {string} props.fileId - The ID of the file to be deleted
+ * @param {string} props.bucketFileId - The ID of the file in the storage bucket
+ * @param {string} props.path - The path to the file (e.g. "files/demo.txt")
+ * @returns {Promise<Object | null>} The deleted file document if the file was deleted successfully, null otherwise
+ */
+const deleteFile = async ({ fileId, bucketFileId, path }: DeleteFileProps) => {
+  const { databases, storage } = await createAdminClient();
 
+  try {
+    const deletedFile = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId
+    );
 
+    // If the file was deleted successfully, delete the file from the storage bucket
+    if (deletedFile) {
+      await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
+    }
+
+    // Revalidate the path to the file so that the file can no longer be accessed
+    revalidatePath(path);
+    return parseStringify({ status: "success" });
+  } catch (error) {
+    handleError(error, "Failed to rename file");
+  }
+};
 export {
   uploadFile,
   getFiles,
   renameFile,
-  updateFileUsers
+  updateFileUsers,
+  deleteFile
 };
