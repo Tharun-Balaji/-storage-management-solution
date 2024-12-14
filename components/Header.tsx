@@ -7,6 +7,15 @@ import FileUploader from './FileUploader';
 import { signOutUser } from '@/lib/actions/user.actions';
 
 
+/**
+ * The Header component renders a header with a search component, a file uploader
+ * and a sign out button. The search component is used for searching files, the file
+ * uploader is used for uploading files and the sign out button is used for signing out
+ * of the app.
+ *
+ * @param {{ userId: string; accountId: string; }} props
+ * @returns {JSX.Element}
+ */
 export default function Header({ userId, accountId }: { userId: string; accountId: string }) {
   return (
     <header className="header">

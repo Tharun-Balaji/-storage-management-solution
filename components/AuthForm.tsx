@@ -49,18 +49,26 @@ const authFormSchema = (formType: FormType) => {
  */
 export default function AuthForm({ type }: { type: FormType }) {
 
+  // 1. Set up state variables and the form.
+  // The error message is displayed below the form.
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  // The account ID is used to generate the OTP.
   const [accountId, setAccountId] = useState(null);
 
+  // The schema depends on the type of form.
   const formSchema = authFormSchema(type);
+  // Use the useForm hook to create a form with the schema.
   const form = useForm<z.infer<typeof formSchema>>({
+    // Use a zod resolver to validate the form.
     resolver: zodResolver(formSchema),
+    // Set default values for the form fields.
     defaultValues: {
       fullName: "",
       email: "",
     },
   });
+
 
   // 2. Define a submit handler.
   // Handles form submission.

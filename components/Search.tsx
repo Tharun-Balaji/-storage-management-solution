@@ -12,6 +12,13 @@ import { useDebounce } from "use-debounce";
 
 
 
+/**
+ * The Search component renders a search bar with a dropdown list of search results.
+ * It debounces the input query to reduce the number of API calls and fetches files
+ * based on the debounced query. It also syncs the query state with the URL's 'query' parameter.
+ * When a search result item is clicked, it closes the search results dropdown, resets the results state,
+ * and navigates to the file's type page with the search query as a parameter.
+ */
 function Search() {
 
   // State to hold the search query input by the user
