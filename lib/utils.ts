@@ -326,6 +326,20 @@ const constructDownloadUrl = (bucketFileId: string) => {
   ];
 };
 
+/**
+ * Calculates the percentage of a given size in bytes relative to a total size of 2GB.
+ * The result is rounded to two decimal places.
+ *
+ * @param {number} sizeInBytes The size in bytes to calculate the percentage for.
+ * @returns {number} The percentage of the size relative to 2GB.
+ */
+const calculatePercentage = (sizeInBytes: number) => {
+  const totalSizeInBytes = 2 * 1024 * 1024 * 1024; // Total size of 2GB in bytes
+  const percentage = (sizeInBytes / totalSizeInBytes) * 100; // Calculate percentage
+  return Number(percentage.toFixed(2)); // Round to two decimal places and return
+};
+
+
 export {
   getFileType,
   parseStringify,
@@ -336,5 +350,6 @@ export {
   convertFileSize,
   formatDateTime,
   constructDownloadUrl,
-  getUsageSummary
+  getUsageSummary,
+  calculatePercentage
 };
