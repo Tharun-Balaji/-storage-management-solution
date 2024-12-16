@@ -278,6 +278,54 @@ const constructDownloadUrl = (bucketFileId: string) => {
   return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/download?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
 };
 
+/**
+ * Returns an array of summaries of files in the storage bucket, organized by file type.
+ * Each summary contains the title of the file type, the total size of files of that type,
+ * the latest modification date of files of that type, the icon representing the file type,
+ * and the URL path for the file type.
+ * @param {Object} totalSpace The object containing the total space used by each type of file.
+ * @returns {Array<Object>} An array of summaries of files in the storage bucket.
+ */
+ const getUsageSummary = (totalSpace: any) => {
+  return [
+    {
+      // Summary for document files
+      title: "Documents",
+      size: totalSpace.document.size, // Total size of document files
+      latestDate: totalSpace.document.latestDate, // Latest modification date of document files
+      icon: "/assets/icons/file-document-light.svg", // Icon representing document files
+      url: "/documents", // URL path for document files
+    },
+    {
+      // Summary for image files
+      title: "Images",
+      size: totalSpace.image.size, // Total size of image files
+      latestDate: totalSpace.image.latestDate, // Latest modification date of image files
+      icon: "/assets/icons/file-image-light.svg", // Icon representing image files
+      url: "/images", // URL path for image files
+    },
+    {
+      // Summary for media files (video and audio combined)
+      title: "Media",
+      size: totalSpace.video.size + totalSpace.audio.size, // Combined size of video and audio files
+      latestDate:
+        totalSpace.video.latestDate > totalSpace.audio.latestDate
+          ? totalSpace.video.latestDate
+          : totalSpace.audio.latestDate, // Latest modification date among video and audio files
+      icon: "/assets/icons/file-video-light.svg", // Icon representing media files
+      url: "/media", // URL path for media files
+    },
+    {
+      // Summary for other files
+      title: "Others",
+      size: totalSpace.other.size, // Total size of other files
+      latestDate: totalSpace.other.latestDate, // Latest modification date of other files
+      icon: "/assets/icons/file-other-light.svg", // Icon representing other files
+      url: "/others", // URL path for other files
+    },
+  ];
+};
+
 export {
   getFileType,
   parseStringify,
@@ -287,5 +335,6 @@ export {
   getFileTypesParams,
   convertFileSize,
   formatDateTime,
-  constructDownloadUrl
+  constructDownloadUrl,
+  getUsageSummary
 };
