@@ -1,8 +1,8 @@
 "use server";
 
-import { DeleteFileProps, GetFilesProps, RenameFileProps, UpdateFileUsersProps, UploadFileProps } from "@/types";
+import { DeleteFileProps, FileType, GetFilesProps, RenameFileProps, UpdateFileUsersProps, UploadFileProps } from "@/types";
 import { appwriteConfig } from "@/lib/appwrite/config";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -297,10 +297,70 @@ const deleteFile = async ({ fileId, bucketFileId, path }: DeleteFileProps) => {
     handleError(error, "Failed to rename file");
   }
 };
+
+/**
+ * Calculates the total space used by a user in the storage bucket
+ * @returns {Promise<Object | null>} The total space used by the user if the calculation was successful, null otherwise
+ */
+async function getTotalSpaceUsed() {
+  try {
+    const { databases } = await createSessionClient();
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error("User is not authenticated.");
+
+    const files = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      [Query.equal("owners", [currentUser.$id])]
+    );
+
+    /**
+     * The total space used by the user in the storage bucket.
+     * The total space is the sum of the sizes of all files uploaded by the user.
+     * The total space is also divided into different types of files (image, document, video, audio, other)
+     * and the size of each type is calculated separately.
+     */
+    const totalSpace = {
+      image: { size: 0, latestDate: "" },
+      document: { size: 0, latestDate: "" },
+      video: { size: 0, latestDate: "" },
+      audio: { size: 0, latestDate: "" },
+      other: { size: 0, latestDate: "" },
+      used: 0,
+      all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
+    };
+
+    /**
+     * Loop through all the files uploaded by the user and calculate the total space used
+     * by each type of file.
+     */
+    files.documents.forEach((file) => {
+      const fileType = file.type as FileType;
+      totalSpace[fileType].size += file.size;
+      totalSpace.used += file.size;
+
+      /**
+       * If the file is the latest in its type, update the latest date.
+       */
+      if (
+        !totalSpace[fileType].latestDate ||
+        new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
+      ) {
+        totalSpace[fileType].latestDate = file.$updatedAt;
+      }
+    });
+
+    return parseStringify(totalSpace);
+  } catch (error) {
+    handleError(error, "Error calculating total space used:, ");
+  }
+}
+
 export {
   uploadFile,
   getFiles,
   renameFile,
   updateFileUsers,
-  deleteFile
+  deleteFile,
+  getTotalSpaceUsed
 };
