@@ -53,7 +53,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ### Uploading file
 ![Uploading File](image-4.png)
 
-
+### Dashboard
+![Dashboard](image-5.png)
 
 
 app/
