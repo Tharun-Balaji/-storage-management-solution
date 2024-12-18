@@ -6,6 +6,8 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 
+export const dynamic = "force-dynamic";
+
 /**
  * This is the main layout component for the dashboard.
  *
