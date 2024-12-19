@@ -6,6 +6,16 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 
+//
+// This line makes sure that Next.js will re-render this component on the server
+// every time, even if the user is already logged in. This is necessary because
+// we need to check if the user is logged in on every request, and redirect them
+// to the sign in page if they are not.
+//
+// Without this, Next.js would only render the component on the server the first
+// time, and then use the cached version on subsequent requests, which would
+// cause the user to not be redirected to the sign in page if they are not logged
+// in.
 export const dynamic = "force-dynamic";
 
 /**
