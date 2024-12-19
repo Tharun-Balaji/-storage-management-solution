@@ -100,49 +100,53 @@ NEXT_APPWRITE_KEY=""
 
 ## Project Structure
 
-## app/
-* **auth/**
-  * **sign-in/**
-    * `page.tsx`: Handles the sign-in page logic and UI.
-  * **sign-up/**
-    * `page.tsx`: Handles the sign-up page logic and UI.
-  * `layout.tsx`: Shared layout for authentication pages.
-* **root/**
-  * `[type]`: Dynamic route for different content types (e.g., posts, users).
-    * `page.tsx`: Renders the content based on the dynamic route parameter.
-  * `layout.tsx`: Shared layout for root-level pages.
-  * `page.ts`: Data fetching logic for the root page.
+```bash
+project/
+│
+├── app/                     # Application pages
+│   ├── (auth)/              # Authentication pages
+│   │   ├── sign-in/         
+│   │   │   └── page.tsx     # Handles the sign-in page logic and UI
+│   │   ├── sign-up/         
+│   │   │   └── page.tsx     # Handles the sign-up page logic and UI
+│   │   └── layout.tsx       # Shared layout for authentication pages
+│   ├── (root)/              # Root-level pages
+│   │   ├── [type]/          # Dynamic route for different content types (e.g., posts, users)
+│   │   │   └── page.tsx     # Renders content based on the dynamic route parameter
+│   │   ├── layout.tsx       # Shared layout for root-level pages
+│   │   └── page.ts          # Data fetching logic for the root page
+│
+├── components/              # Reusable UI components
+│   ├── ActionDropdown.tsx   # Reusable dropdown component for actions
+│   ├── ActionsModalContent.tsx # Modal content for various actions
+│   ├── Card.tsx             # Generic card component for displaying information
+│   ├── FileUploader.tsx     # File upload component
+│   ├── Header.tsx           # Header component for the application
+│   ├── MobileNavigation.tsx # Navigation component for mobile devices
+│   ├── Search.tsx           # Search component
+│   ├── Sidebar.tsx          # Sidebar component for navigation
+│   ├── Thumbnail.tsx        # Thumbnail component for images
+│   └── ui/                  # Shared UI components from Shadcn
+│
+├── lib/                     # Libraries and utilities
+│   ├── actions/             # Action handlers
+│   │   ├── file.actions.ts  # Actions related to file operations
+│   │   └── user.actions.ts  # Actions related to user operations
+│   ├── appwrite/            # Appwrite configuration
+│   │   ├── config.ts        # Appwrite configuration settings
+│   │   └── index.ts         # Main Appwrite client instance
+│   └── utils.ts             # General utility functions
+│
+├── hooks/                   # Custom hooks
+│   └── use-toast.ts         # Custom hook for displaying toast notifications
+│
+├── types/                   # TypeScript types
+│   └── index.d.ts           # Global type definitions
+│
+└── constants/               # Application constants
+    └── index.ts             # Global constants
 
-## components/
-* **ActionDropdown.tsx**: Reusable dropdown component for actions.
-* **ActionsModalContent.tsx**: Modal content for various actions.
-* **Card.tsx**: Generic card component for displaying information.
-* **FileUploader.tsx**: File upload component.
-* **Header.tsx**: Header component for the application.
-* **MobileNavigation.tsx**: Navigation component for mobile devices.
-* **Search.tsx**: Search component.
-* **Sidebar.tsx**: Sidebar component for navigation.
-* **Thumbnail.tsx**: Thumbnail component for images.
-* **ui/**: Shared UI components from Shadcn.
-
-## lib/
-* **actions/**: Action creators and utility functions.
-  * `file.actions.ts`: Actions related to file operations.
-  * `user.actions.ts`: Actions related to user operations.
-* **appwrite/**: Appwrite configuration and integration.
-  * `config.ts`: Appwrite configuration settings.
-  * `index.ts`: Main Appwrite client instance.
-  * `utils.ts`: Utility functions for interacting with Appwrite.
-* **utils.ts**: General utility functions.
-
-## hooks/
-* **use-toast.ts**: Custom hook for displaying toast notifications.
-
-## types/
-* **index.d.ts**: Global type definitions.
-
-## constants/
-* **index.ts**: Global constants.
+```
 
 ## Core Implementation
 
