@@ -18,7 +18,7 @@ A modern storage management and file sharing platform built with Next.js 15 and 
   - [User Authentication](#user-authentication)
 - [Live Demo](#live-demo)
 
-## 🖼️ Preview
+## 🖼️ Preview<a name="preview"></a>
 
 ### Login Page
 ![Login Page](image.png)
